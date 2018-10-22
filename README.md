@@ -1,2 +1,3 @@
-# angry-birds-level-generation-CIG
-Paper on generation of levels for Angry Birds, Laura's Bachelor's Thesis
+# angry-birds-level-generation
+Level Generation Algorithm with Evolutionary Computation for the AngryBirds videogame
+
