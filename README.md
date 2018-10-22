@@ -1,2 +1,2 @@
-# AngryBirdsITT_MSC
-Repository for the AngryBirds evolutionary computation algorithm for level generation
+# angry-birds-level-generation-CIG
+Paper on generation of levels for Angry Birds, Laura's Bachelor's Thesis
