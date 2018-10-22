@@ -23,7 +23,7 @@ __status__ = "Development"
 
 
 ## Values used for the genetic algorithm
-population = 10     # For now it can only be below 10
+population_size = 10     # For now it can only be below 10
 max_gen = 100       # Max number of generations
 fits = [0]           # Variable to save the fitness of each generation
 gen = 1             # Generation 1
@@ -86,7 +86,9 @@ for pop in pop_list:
     
     for piece in range(0, len(elem)):
         pop.append([pieceDic[elem[piece]-1], x[piece], y[piece]])
-        
+
+population = [ [random.randint(0, n) for p in range (0, ind_pieces)]  for i in range(population_size)]
+
 while gen < max_gen and max(fits) < 100:
     fits = [0]
     # If the current generation is not the first one generate a new population
