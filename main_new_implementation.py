@@ -9,10 +9,17 @@ Created on Wed Oct 17 16:36:18 2018
 import random
 import math
 
+#
+import datetime
+import time
+import os
+import json
+import sys
+import AngryBirdsGA.XmlHelpers_mod as xml
+
 __author__ = "Salinas Hernandez Jaime"
 __copyright__ = "Copyright 2018, Tijuana Institute of Technology"
 __credits__ = ["Dr. Mario García Valdez",""]
-
 __license__ = "ITT"
 __version__ = "1.0.2"
 __date__ = "October 19, 2018 14:10"
@@ -23,7 +30,7 @@ __status__ = "Development"
 
 
 ## Values used for the genetic algorithm
-population_size = 10     # For now it can only be below 10
+population = 10     # For now it can only be below 10
 max_gen = 100       # Max number of generations
 fits = [0]           # Variable to save the fitness of each generation
 gen = 1             # Generation 1
@@ -36,25 +43,25 @@ ind_pieces = 10     # Number of pieces that define an individual
 
 ## "Dictionary" to save the base pieces and structures
 pieceDic = []
-pieceDic.append([["Circle","wood",0,0,0]])
-pieceDic.append([["RectTiny","wood",0,0,0]])
-pieceDic.append([["RectSmall","wood",0,0,0]])
-pieceDic.append([["RectMedium","wood",0,0,0]])
-pieceDic.append([["RectBig","wood",0,0,0]])
-pieceDic.append([["RectFat","wood",0,0,0]])
-pieceDic.append([["Square","wood",0,0,0]])
-pieceDic.append([["SquareTiny","wood",0,0,0]])
-pieceDic.append([["Triangle","wood",0,0,0]])
-pieceDic.append([["TriangleHole","wood",0,0,0]])
-pieceDic.append([["SquareHole","wood",0,0,0]])
-pieceDic.append([["RectBig","wood",0,-90,0],
+pieceDic.append([[72, 72], ["Circle","wood",0,0,0]])
+pieceDic.append([[22, 42], ["RectTiny","wood",0,0,0]])
+pieceDic.append([[22, 82], ["RectSmall","wood",0,0,0]])
+pieceDic.append([[22, 162], ["RectMedium","wood",0,0,0]])
+pieceDic.append([[22, 182], ["RectBig","wood",0,0,0]])
+pieceDic.append([[42, 82], ["RectFat","wood",0,0,0]])
+pieceDic.append([[42, 42], ["SquareSmall","wood",0,0,0]])
+pieceDic.append([[22, 22], ["SquareTiny","wood",0,0,0]])
+pieceDic.append([[72, 72], ["Triangle","wood",0,0,0]])
+pieceDic.append([[82, 82], ["TriangleHole","wood",0,0,0]])
+pieceDic.append([[82, 82], ["SquareHole","wood",0,0,0]])
+pieceDic.append([[182, 202], ["RectBig","wood",0,-91,0],
                  ["RectMedium","wood",-90,0,90],
                  ["RectMedium","wood",90,0,90],
-                 ["RectBig","wood",0,90,0]])
-pieceDic.append([["RectBig","wood",0,-30,0],
+                 ["RectBig","wood",0,91,0]])
+pieceDic.append([[182, 82], ["RectBig","wood",0,-31,0],
                  ["RectTiny","wood",-90,0,90],
                  ["RectTiny","wood",90,0,90],
-                 ["RectBig","wood",0,30,0]])
+                 ["RectBig","wood",0,31,0]])
 
 ## *Dynamically add more via the genetic algorithm
 
@@ -86,9 +93,7 @@ for pop in pop_list:
     
     for piece in range(0, len(elem)):
         pop.append([pieceDic[elem[piece]-1], x[piece], y[piece]])
-
-population = [ [random.randint(0, n) for p in range (0, ind_pieces)]  for i in range(population_size)]
-
+        
 while gen < max_gen and max(fits) < 100:
     fits = [0]
     # If the current generation is not the first one generate a new population
@@ -123,8 +128,8 @@ while gen < max_gen and max(fits) < 100:
     # Generate the cross-over operation (one-point crossover)
     for cross_parent in range(0, len(parents), 2):
         # Generate a copy of each parent for the cross-over operation
-        father = pop_list[parents[cross_parent]].copy()
-        mother = pop_list[parents[cross_parent + 1]].copy()
+        father = pop_list[parents[cross_parent] -1 ].copy()
+        mother = pop_list[parents[cross_parent + 1] - 1].copy()
         
         # "Divide" the parents chromosomes for the operation
         father11 = father[0:math.floor(ind_pieces/2)]
@@ -142,17 +147,26 @@ while gen < max_gen and max(fits) < 100:
         chance = random.randint(1, 100)
         threshold = 100 - (100 * per_mut)
         if chance > threshold:
-            print("Mutate")
+            var=0
+            #print("Mutate")
+        else:
+            var=1
+            #print("Not Mutate")
         
         
         # Replace the parents in the generation
-        pop_list[parents[cross_parent]] = son
-        pop_list[parents[cross_parent + 1]] = daughter
+        pop_list[parents[cross_parent] - 1] = son
+        pop_list[parents[cross_parent + 1] - 1] = daughter
         
     
     # After the cross-over
     
     # Increase value of the generation for the next cycle
     gen = gen + 1
+
     
+project_root = os.getcwd()
+config_param = json.loads(open("ga_parameters.json","r").read() )
+log_path = os.path.join(project_root, config_param['log_dir'])
+xml.writeXML(p01, os.path.join(project_root, log_path + "/levels-999.xml"))
     
