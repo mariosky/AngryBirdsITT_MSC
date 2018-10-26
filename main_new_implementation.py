@@ -32,13 +32,15 @@ __status__ = "Development"
 ## Values used for the genetic algorithm
 population = 10     # For now it can only be below 10
 max_gen = 100       # Max number of generations
-fits = [0]           # Variable to save the fitness of each generation
+fits = [0]          # Variable to save the fitness of each generation
 gen = 1             # Generation 1
+per_elite = 0.1     # Percentage of selected elite members for each generation
 per_cross = 0.5     # Percentage of cross-over (cross-over operator)
 per_comb = 0.3      # Percentage of combination (combination operator)
 per_mut = 0.4       # Percentage of mutation
 cross_type = 0      # Type of cross-over [ 0: One point CO - 1: Random point CO - TBD]
 ind_pieces = 10     # Number of pieces that define an individual
+elite = []          # List to keep the "Elite" members of all generations
 
 
 ## "Dictionary" to save the base pieces and structures
@@ -83,6 +85,16 @@ pop_list = [p01, p02, p03, p04, p05, p06, p07, p08, p09, p10]
 
 ## Obtain the maximum number of pieces currently available 
 n= len(pieceDic)
+
+## Create the directories if they do not exist
+project_root = os.getcwd()
+config_param = json.loads(open("ga_parameters.json","r").read() )
+log_path = os.path.join(project_root, config_param['log_dir'])
+game_path = os.path.join(os.path.dirname(project_root), config_param['game_path'])
+write_path = os.path.join(os.path.dirname(project_root),config_param['write_path'])
+read_path = os.path.join(os.path.dirname(project_root),config_param['read_path'])
+log_base_name = config_param['log_base_name']
+os.makedirs(os.path.join(project_root, log_path), exist_ok=True)
 
 ## A cycle to fill-up the first generation of the population
 for pop in pop_list:
@@ -167,19 +179,44 @@ while gen < max_gen and max(fits) < 100:
     config_param = json.loads(open("ga_parameters.json","r").read() )
     log_path = os.path.join(project_root, config_param['log_dir'])
     
-    m = 0 # Counter for each population member
-    for member in population:
+    m = [] # Counter for each population member
+    c = 0
+    for member in pop_list:
+        score = xml.writeXML(member, os.path.join(project_root, log_path + "/levela-0-" + log_base_name +
+                                             str(c) + ".xml"))
+        m.append([c, score])
+        c = c + 1
 
-    xml.writeXML(p01, os.path.join(project_root, log_path + "/levels-999.xml"))
-    
+    #xml.writeXML(p01, os.path.join(project_root, log_path + "/levels-999.xml"))
+    #m.sort(key=lambda x:x[1], reverse=True)
+
+    # Select the "Elite" members of the generation and add them to the elite
+    # list IF THEY DO NOT exist already
+    member_count = 0
+    elite_count = 0
+    elite_threshold = len(pop_list) * per_elite
+    while elite_count <= elite_threshold:
+        if pop_list[member_count] in elite:
+            pass
+        else:
+            pos = 0
+            if len(elite) == 0:
+                elite.append([pop_list[member_count], m[member_count][1]])
+            else:
+                for elite_member in elite:
+                    if m[member_count][1] >= elite_member[1]:
+                        elite.insert(pos ,[pop_list[member_count], m[member_count][1]])
+                        break
+                    else:
+                        pos = pos + 1
+            elite_count = elite_count + 1
+        member_count = member_count + 1
 
     # Increase value of the generation for the next cycle
     gen = gen + 1
     
 # End of generation
     
-project_root = os.getcwd()
-config_param = json.loads(open("ga_parameters.json","r").read() )
-log_path = os.path.join(project_root, config_param['log_dir'])
-xml.writeXML(p01, os.path.join(project_root, log_path + "/levels-999.xml"))
+
+#xml.writeXML(p01, os.path.join(project_root, log_path + "/levels-999.xml"))
     
