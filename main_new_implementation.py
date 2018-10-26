@@ -81,7 +81,7 @@ p10 = []
 ## Create a variable reference in a list format to change values smoothly
 pop_list = [p01, p02, p03, p04, p05, p06, p07, p08, p09, p10]
 
-## Obtener el valor maximo de piezas o compuestos al momento 
+## Obtain the maximum number of pieces currently available 
 n= len(pieceDic)
 
 ## A cycle to fill-up the first generation of the population
@@ -159,11 +159,24 @@ while gen < max_gen and max(fits) < 100:
         pop_list[parents[cross_parent + 1] - 1] = daughter
         
     
-    # After the cross-over
+    ## After the cross-over
+
+    # Create the XML file for every member of the population 
+    # and obtain the maximum height registered
+    project_root = os.getcwd()
+    config_param = json.loads(open("ga_parameters.json","r").read() )
+    log_path = os.path.join(project_root, config_param['log_dir'])
     
+    m = 0 # Counter for each population member
+    for member in population:
+
+    xml.writeXML(p01, os.path.join(project_root, log_path + "/levels-999.xml"))
+    
+
     # Increase value of the generation for the next cycle
     gen = gen + 1
-
+    
+# End of generation
     
 project_root = os.getcwd()
 config_param = json.loads(open("ga_parameters.json","r").read() )
