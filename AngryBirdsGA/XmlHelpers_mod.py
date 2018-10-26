@@ -30,6 +30,7 @@ def writeXML(individual, filename):
     if STRING_XML == "":
         STRING_XML = initXMLLevel()
 
+    
     f = open(filename, "w")
     index = STRING_XML.find('Camera')
     final_xml = []
@@ -78,3 +79,5 @@ def writeXML(individual, filename):
     f.write(''.join(final_xml))
 
     f.close()
+    score = el_height
+    return el_height
