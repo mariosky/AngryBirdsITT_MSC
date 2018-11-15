@@ -1,15 +1,13 @@
 
-
+import random
 
 # pieceDic.append([[72, 72], ["Circle","wood",0,0,0]])
 
-
-BLOCK_TYPE = { 'Circle':   {'height': 72, 'lenght': 72},
-               'RectTiny': {'height': 22, 'lenght': 42},
-               'RectSmall':{'height': 22, 'lenght': 82},
-               'RectBig':{'height': 22, 'lenght':182},
+BLOCK_TYPE = { 'Circle':    {'height': 72, 'lenght': 72},
+               'RectTiny':  {'height': 22, 'lenght': 42},
+               'RectSmall': {'height': 22, 'lenght': 82},
+               'RectBig':   {'height': 22, 'lenght':182},
                'RectMedium':{'height': 22, 'lenght': 162},
-
                }
 
 BLOCK_MATERIAL = { 'Wood':0,
@@ -72,7 +70,7 @@ Composites = {
 
 # As a basic example a chromosome is a list of Connected Composites
 
-chromosome = [0,1,0]
+chromosome = [0, 1, 0]
 
 # when evaluating fitness or positioning in map
 
@@ -84,8 +82,8 @@ for c in chromosome_objects:
 
 class Individual:
     def __init__(self, **kwargs):
-        self.id = kwargs['id']
-        self.fitness = kwargs.get('fitness',{})
+        #self.id = kwargs['id']
+        self.fitness = kwargs.get('fitness', 0)
         self.chromosome = kwargs.get('chromosome',[])
         self.__dict__.update(kwargs)
         self.chromosome_objects = [ Composites[composite] for composite in chromosome]
@@ -95,3 +93,13 @@ class Individual:
         #To do
         # Here you can use the chromosome objects etc.
         pass
+
+
+
+
+pop = [Individual(chromosome = [random.randint(0,1) for p in range(3)] , score=12  ) for i in range(10)]
+
+for ind in pop:
+    print(ind.__dict__)
+    for gen in ind.chromosome_objects:
+        print(gen.blocks)
